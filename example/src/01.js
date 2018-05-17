@@ -20,22 +20,21 @@ const styles = {
 	shape: { width: 300, height: 300, willChange: 'transform' }
 }
 
+const toBackground = ([start, stop, end]) =>
+	`linear-gradient(to bottom, ${listToRgba(start)} ${toPercent(stop)}, ${listToRgba(end)} 100%)`
+const toTransform = ([scale, rotation]) => `scale3d(${scale}, ${scale}, ${scale}) rotate(${toDeg(rotation)})`
 const Content = reactive(({ toggle, style$ }) => {
-	let toBackground = ([start, stop, end]) =>
-		`linear-gradient(to bottom, ${listToRgba(start)} ${toPercent(stop)}, ${listToRgba(end)} 100%)`
 	let background$ = combineLatest(style$.start, style$.stop, style$.end).pipe(map(toBackground))
-	let toTransform = ([scale, rotation]) => `scale3d(${scale}, ${scale}, ${scale}) rotate(${toDeg(rotation)})`
 	let transform$ = combineLatest(style$.scale, style$.rotation).pipe(map(toTransform))
+	let containerStyle$ = { ...styles.container, background: background$ }
+	let shapeStyle$ = { ...styles.shape, transform: transform$ }
+	let fill$ = style$.color.pipe(map(listToRgba))
+	let d$ = style$.shape.pipe(map(toShape))
 	return (
-		<div
-			style={{
-				...styles.container,
-				background: background$
-			}}
-		>
-			<svg style={{ ...styles.shape, transform: transform$ }} version="1.1" viewBox="0 0 400 400">
-				<g style={{ cursor: 'pointer' }} fill={style$.color.pipe(map(listToRgba))} fillRule="evenodd" onClick={toggle}>
-					<path id="path-1" d={style$.shape.pipe(map(toShape))} />
+		<div style={containerStyle$}>
+			<svg style={shapeStyle$} version="1.1" viewBox="0 0 400 400">
+				<g style={{ cursor: 'pointer' }} fill={fill$} fillRule="evenodd" onClick={toggle}>
+					<path id="path-1" d={d$} />
 				</g>
 			</svg>
 		</div>
