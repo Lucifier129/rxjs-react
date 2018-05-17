@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
 import { combineLatest } from 'rxjs'
 import { map, tap } from 'rxjs/operators'
-import { spring, springObject, springObjectAll, colorToRgba, listToRgba, toShape, toPercent, toDeg } from './lib/util'
-import { normalizeColor } from './lib/normalize-css-color'
+import { spring, springObject, springObjectAll, colorToRgba, listToRgba, toShape, toPercent, toDeg } from './shared/util'
+import { normalizeColor } from './shared/normalize-css-color'
 
 const TRIANGLE = [20, 380, 380, 380, 380, 380, 200, 20, 20, 380]
 const RECTANGLE = [20, 20, 20, 380, 380, 380, 380, 20, 20, 20]

@@ -16,7 +16,7 @@ import {
 	sample,
 	delay
 } from 'rxjs/operators'
-import { spring } from './lib/util'
+import { spring } from './shared/util'
 import EventEmitter from 'events'
 
 const createToggler = status => {
