@@ -1,0 +1,47 @@
+{
+  "name": "rxjs-react",
+  "version": "0.0.1",
+  "description": "make your react-component become reactive with rxjs",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "prebuild": "rimraf ./lib",
+    "example:dev": "webpack --watch --env.development",
+    "example:prod": "webpack --env.production",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucifier129/rxjs-react.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucifier129/rxjs-react/issues"
+  },
+  "homepage": "https://github.com/Lucifier129/rxjs-react#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/plugin-proposal-pipeline-operator": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@babel/preset-react": "^7.0.0-beta.44",
+    "@babel/preset-stage-0": "^7.0.0-beta.44",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^22.4.3",
+    "babel-loader": "^8.0.0-beta.2",
+    "events": "^2.0.0",
+    "jest": "^22.4.3",
+    "regenerator-runtime": "^0.11.1",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.4.1",
+    "webpack-cli": "^2.0.13",
+    "wobble": "^1.5.0"
+  },
+  "peerDependencies": {
+    "react": ">= 16.3.2",
+    "react-dom": ">= 16.3.2",
+    "rxjs": ">= 6.1.0"
+  }
+}
