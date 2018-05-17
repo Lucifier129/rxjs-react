@@ -1,73 +1,93 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
+import { springObject, springValue } from 'rxjs-react/spring'
 import { combineLatest } from 'rxjs'
 import { map, tap } from 'rxjs/operators'
-import { spring, springObject, springObjectAll, colorToRgba, listToRgba, toShape, toPercent, toDeg } from './shared/util'
-import { normalizeColor } from './shared/normalize-css-color'
 
-const TRIANGLE = [20, 380, 380, 380, 380, 380, 200, 20, 20, 380]
-const RECTANGLE = [20, 20, 20, 380, 380, 380, 380, 20, 20, 20]
-
+const TRIANGLE = 'M20,380 L380,380 L380,380 L200,20 L20,380 Z'
+const RECTANGLE = 'M20,20 L20,380 L380,380 L380,20 L20,20 Z'
 const styles = {
-	container: {
-		height: '100%',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		willChange: 'background'
-	},
-	shape: { width: 300, height: 300, willChange: 'transform' }
+  container: {
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    willChange: 'background'
+  },
+  shape: { width: 300, height: 300, willChange: 'transform' }
 }
 
-const toBackground = ([start, stop, end]) =>
-	`linear-gradient(to bottom, ${listToRgba(start)} ${toPercent(stop)}, ${listToRgba(end)} 100%)`
-const toTransform = ([scale, rotation]) => `scale3d(${scale}, ${scale}, ${scale}) rotate(${toDeg(rotation)})`
-const Content = reactive(({ toggle, style$ }) => {
-	let background$ = combineLatest(style$.start, style$.stop, style$.end).pipe(map(toBackground))
-	let transform$ = combineLatest(style$.scale, style$.rotation).pipe(map(toTransform))
-	let containerStyle$ = { ...styles.container, background: background$ }
-	let shapeStyle$ = { ...styles.shape, transform: transform$ }
-	let fill$ = style$.color.pipe(map(listToRgba))
-	let d$ = style$.shape.pipe(map(toShape))
-	return (
-		<div style={containerStyle$}>
-			<svg style={shapeStyle$} version="1.1" viewBox="0 0 400 400">
-				<g style={{ cursor: 'pointer' }} fill={fill$} fillRule="evenodd" onClick={toggle}>
-					<path id="path-1" d={d$} />
-				</g>
-			</svg>
-		</div>
-	)
-})
+const Content = ({
+  toggle,
+  color,
+  scale,
+  shape,
+  start,
+  end,
+  stop,
+  rotation
+}) => (
+  <div
+    style={{
+      ...styles.container,
+      background: `linear-gradient(to bottom, ${start} ${stop}, ${end} 100%)`
+    }}
+  >
+    <svg
+      style={{
+        ...styles.shape,
+        transform: `scale3d(${scale}, ${scale}, ${scale}) rotate(${rotation})`
+      }}
+      version="1.1"
+      viewBox="0 0 400 400"
+    >
+      <g
+        style={{ cursor: 'pointer' }}
+        fill={color}
+        fillRule="evenodd"
+        onClick={toggle}
+      >
+        <path d={shape} />
+      </g>
+    </svg>
+  </div>
+)
 
-let style1 = {
-	color: colorToRgba('#247BA0'),
-	start: colorToRgba('#B2DBBF'),
-	end: colorToRgba('#247BA0'),
-	scale: 0.6,
-	shape: TRIANGLE,
-	stop: 0,
-	rotation: 0
+const triangle = {
+  color: '#247BA0',
+  start: '#B2DBBF',
+  end: '#247BA0',
+  scale: 0.6,
+  shape: TRIANGLE,
+  stop: '0%',
+  rotation: '0deg'
 }
 
-let style2 = {
-	color: colorToRgba('#70C1B3'),
-	start: colorToRgba('#B2DBBF'),
-	end: colorToRgba('#F3FFBD'),
-	scale: 1.5,
-	shape: RECTANGLE,
-	stop: 50,
-	rotation: 45
+const rectangle = {
+  color: '#70C1B3',
+  start: '#B2DBBF',
+  end: '#F3FFBD',
+  scale: 1.5,
+  shape: RECTANGLE,
+  stop: '50%',
+  rotation: '45deg'
 }
 
+const triangle2rectangle$ = springValue(triangle, rectangle)
+const rectangle2triangle$ = springValue(rectangle, triangle)
+
+@reactive
 class App extends React.Component {
-	state = { toggle: true }
-	toggle = () => this.setState(state => ({ toggle: !state.toggle }))
-	render() {
-		const style$ = this.state.toggle ? springObject(style1, style2) : springObject(style2, style1)
-		return <Content style$={style$} toggle={this.toggle} />
-	}
+  state = { toggle: true }
+  toggle = () => this.setState(state => ({ toggle: !state.toggle }))
+  render() {
+    const toggle = this.state.toggle
+    const style$ = toggle ? triangle2rectangle$ : rectangle2triangle$
+    return style$.pipe(
+      map(style => <Content toggle={this.toggle} {...style} />)
+    )
+  }
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))

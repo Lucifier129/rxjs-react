@@ -14,8 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/Lucifier129/rxjs-react.git"
   },
-  "keywords": [],
-  "author": "",
+  "files": ["lib"],
+  "keywords": ["rxjs", "react", "reactive"],
+  "author": "https://github.com/Lucifier129",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Lucifier129/rxjs-react/issues"
