@@ -6,6 +6,7 @@ module.exports = (env, argv) => {
     devtool: env.production ? false : 'eval',
     entry: {
       '01': './example/src/01',
+      '01-vanilla': './example/src/01-vanilla',
       todo: './example/src/todo'
     },
     output: {
