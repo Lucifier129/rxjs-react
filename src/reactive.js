@@ -1,14 +1,7 @@
 import React from 'react'
 import { Subject, noop } from 'rxjs'
 import { switchMap, publishReplay, refCount } from 'rxjs/operators'
-import {
-  combine,
-  unsubscribe,
-  isReactComponent,
-  getDisplayName,
-  isPlainObject,
-  once
-} from './shared'
+import { combine, unsubscribe, isReactComponent, getDisplayName, isPlainObject, once } from './shared'
 
 const defaults = { debounce: 0, displayName: '', PureComponent: true }
 const reactive = options => Component => {
@@ -58,7 +51,7 @@ const createReactiveAgent = (instance, superRender, settings) => {
   let view$ = subject.pipe(switchMap(toView))
   let handleView = nextView => {
     view = nextView
-    if (mounted) {
+    if (mounted && !isRendering) {
       clearTimeout(timer)
       timer = setTimeout(refresh, settings.debounce)
     }
@@ -76,9 +69,13 @@ const createReactiveAgent = (instance, superRender, settings) => {
     subscription.unsubscribe()
     subscriptions.forEach(unsubscribe)
   }
-
+  let isRendering = false
   let render = () => {
-    if (!mounted || !isRefresh) subject.next(superRender.call(instance))
+    if (!mounted || !isRefresh) {
+      isRendering = true
+      subject.next(superRender.call(instance))
+      isRendering = false
+    }
     return view
   }
 
