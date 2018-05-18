@@ -8,6 +8,7 @@
     "prebuild": "rimraf ./lib",
     "example:dev": "webpack --watch --env.development",
     "example:prod": "webpack --env.production",
+    "preexample:prod": "rimraf ./example/dist",
     "test": "jest"
   },
   "repository": {

@@ -15,6 +15,12 @@ export const once = f => source => {
 export const isSource = obj => !!obj && isObservable(obj)
 export const makeSource = obj => (isSource(obj) ? obj : of(obj))
 
+export const mapValue = (obj, f) =>
+	Object.keys(obj).reduce((result, key) => {
+		result[key] = f(obj[key], key)
+		return result
+	}, {})
+
 export const isPlainObject = obj => {
   if (typeof obj !== 'object' || obj === null) return false
 

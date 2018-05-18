@@ -3,7 +3,7 @@ const path = require('path')
 module.exports = (env, argv) => {
   return {
     mode: env.production ? 'production' : 'development',
-    devtool: env.production ? false : 'eval',
+    devtool: env.production ? false : '#source-map',
     entry: {
       '01': './example/src/01',
       '01-vanilla': './example/src/01-vanilla',
