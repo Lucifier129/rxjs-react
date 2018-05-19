@@ -107,7 +107,7 @@ class TodoItem$ extends React.PureComponent {
   spring$ = dynamicSpring()
   handleRemove = () => {
     let remove = value => this.props.onRemove(this.props.id)
-    this.spring$.next(0, { complete: remove })
+    this.spring$.next(0).subscribe({ complete: remove })
   }
   handleToggle = () => {
     this.props.onToggle(this.props.id)

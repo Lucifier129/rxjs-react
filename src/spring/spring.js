@@ -31,7 +31,11 @@ export const dynamicSpring = (fromValue = 0, toValue = 1, options) => {
   }
   let startValue = { value: toValue, observer: options && options.observer }
   let spring$ = subject.pipe(startWith(startValue), switchMap(handleSwitch))
-  spring$.next = (value, observer) => subject.next({ value, observer })
+  spring$.next = value => {
+    let innerSubject = new ReplaySubject(1)
+    subject.next({ value, observer: innerSubject })
+    return innerSubject
+  }
   spring$.complete = () => subject.complete()
   return spring$
 }
