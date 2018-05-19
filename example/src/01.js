@@ -32,7 +32,7 @@ const Content = ({ toggle, color, scale, shape, start, end, stop, rotation }) =>
       version="1.1"
       viewBox="0 0 400 400"
     >
-      <g style={{ cursor: 'pointer' }} fill={color} fillRule="evenodd" onClick={toggle}>
+      <g style={{ cursor: 'pointer' }} fill={color} fillRule="evenodd" onMouseDown={toggle}>
         <path d={shape} />
       </g>
     </svg>
@@ -61,7 +61,7 @@ const rectangle = {
 
 @reactive
 class App extends React.Component {
-  spring$ = dynamicSpring(triangle, rectangle)
+  spring$ = dynamicSpring(triangle, rectangle, { fromValue: 1, toValue: 0 })
   status = false
   toggle = () => {
     this.spring$.next(!this.status ? triangle : rectangle)

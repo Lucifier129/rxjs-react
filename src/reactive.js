@@ -3,18 +3,18 @@ import { Subject, noop } from 'rxjs'
 import { switchMap, publishReplay, refCount } from 'rxjs/operators'
 import { combine, unsubscribe, isReactComponent, getDisplayName, isPlainObject, once } from './shared'
 
-const defaults = { debounce: 0, displayName: '', PureComponent: true }
+const defaults = { displayName: '', PureComponent: true }
 const reactive = options => Component => {
   const settings = { ...defaults, ...options }
   const ReactComponent = makeReactComponent(Component, settings.PureComponent)
   class ReactiveComponent extends ReactComponent {
     $$agent = createReactiveAgent(this, super.render, settings)
     componentDidMount() {
-      this.$$agent.setMounted(true)
+      this.$$agent.handleMounted()
       super.componentDidMount && super.componentDidMount()
     }
     componentWillUnmount() {
-      this.$$agent.setMounted(false)
+      this.$$agent.handleUnmount()
       super.componentWillUnmount && super.componentWillUnmount()
     }
     render() {
@@ -28,9 +28,6 @@ const reactive = options => Component => {
 
 const createReactiveAgent = (instance, superRender, settings) => {
   let view = null
-  let timer = null
-  let mounted = false
-  let isRefresh = false
   let subscriptions = []
   let subject = new Subject()
   let clearSubscriptions = () => {
@@ -49,21 +46,28 @@ const createReactiveAgent = (instance, superRender, settings) => {
     return view$.pipe(once(clearSubscriptions))
   }
   let view$ = subject.pipe(switchMap(toView))
+  let hasRequestAnimation = false
   let handleView = nextView => {
     view = nextView
     if (mounted && !isRendering) {
-      clearTimeout(timer)
-      timer = setTimeout(refresh, settings.debounce)
+      if (hasRequestAnimation) return
+      hasRequestAnimation = true
+      requestAnimationFrame(refresh)
     }
   }
   let subscription = view$.subscribe(handleView)
+  let isRefresh = false
   let refresh = () => {
+    hasRequestAnimation = false
     if (!mounted) return
     isRefresh = true
     instance.forceUpdate()
     isRefresh = false
   }
-  let setMounted = status => (mounted = status)
+  let mounted = false
+  let handleMounted = () => {
+    mounted = true
+  }
   let handleUnmount = () => {
     mounted = false
     subscription.unsubscribe()
@@ -81,7 +85,7 @@ const createReactiveAgent = (instance, superRender, settings) => {
 
   return {
     render,
-    setMounted,
+    handleMounted,
     handleUnmount
   }
 }
