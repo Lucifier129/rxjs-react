@@ -1,11 +1,11 @@
-import { Spring } from 'wobble'
+import { Spring as WobbleSpring } from 'wobble'
 import { Observable, ReplaySubject } from 'rxjs'
 import { switchMap, tap, startWith } from 'rxjs/operators'
 import handleValue from './handleValue'
 
-export const spring = (fromValue = 0, toValue = 1, options) => {
+const spring = (fromValue, toValue, options) => {
   return Observable.create(observer => {
-    let instance = new Spring({
+    let instance = new WobbleSpring({
       ...options,
       fromValue: 0,
       toValue: 1
@@ -22,7 +22,11 @@ export const spring = (fromValue = 0, toValue = 1, options) => {
   })
 }
 
-export const dynamicSpring = (fromValue = 0, toValue = 1, options) => {
+export function Spring(fromValue, toValue, options) {
+  return spring(fromValue, toValue, options)
+}
+
+const springSubject = (fromValue, toValue, options) => {
   let lastValue = fromValue
   let subject = new ReplaySubject(1)
   let updateLastValue = value => (lastValue = value)
@@ -38,4 +42,8 @@ export const dynamicSpring = (fromValue = 0, toValue = 1, options) => {
   }
   spring$.complete = () => subject.complete()
   return spring$
+}
+
+export function SpringSubject(fromValue, toValue, options) {
+  return springSubject(fromValue, toValue, options)
 }

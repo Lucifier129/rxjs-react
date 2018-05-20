@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { reactive } from 'rxjs-react'
-import { SpringSubject } from 'rxjs-react/spring'
+import { Spring } from 'rxjs-react/component'
 import { map, tap } from 'rxjs/operators'
 
 const TRIANGLE = 'M20,380 L380,380 L380,380 L200,20 L20,380 Z'
@@ -59,16 +58,21 @@ const rectangle = {
   rotation: '45deg'
 }
 
-@reactive
 class App extends React.Component {
-  spring$ = new SpringSubject(triangle, rectangle)
-  status = false
+  state = {
+    status: false
+  }
   toggle = () => {
-    this.spring$.next(!this.status ? triangle : rectangle)
-    this.status = !this.status
+    this.setState({ status: !this.state.status })
   }
   render() {
-    return this.spring$.pipe(map(style => <Content toggle={this.toggle} {...style} />))
+    return (
+      <Spring to={this.state.status ? rectangle : triangle}>
+        {style => {
+          return <Content toggle={this.toggle} {...style} />
+        }}
+      </Spring>
+    )
   }
 }
 

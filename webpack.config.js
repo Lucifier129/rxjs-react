@@ -6,7 +6,11 @@ module.exports = (env, argv) => {
     devtool: env.production ? false : '#source-map',
     entry: {
       '01': './example/src/01',
+      '02': './example/src/02',
+      '03': './example/src/03',
+      '04': './example/src/04',
       '01-vanilla': './example/src/01-vanilla',
+      '01-component': './example/src/01-component',
       todo: './example/src/todo'
     },
     output: {

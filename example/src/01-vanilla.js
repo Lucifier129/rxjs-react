@@ -1,4 +1,4 @@
-import { dynamicSpring } from 'rxjs-react/spring'
+import { SpringSubject } from 'rxjs-react/spring'
 import { map, tap } from 'rxjs/operators'
 
 const TRIANGLE = 'M20,380 L380,380 L380,380 L200,20 L20,380 Z'
@@ -41,7 +41,7 @@ const rectangle = {
   rotation: '45deg'
 }
 
-const spring$ = dynamicSpring(triangle, rectangle)
+const spring$ = SpringSubject(triangle, rectangle)
 const root = document.getElementById('root')
 
 spring$.subscribe(style => {

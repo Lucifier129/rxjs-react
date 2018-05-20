@@ -31,8 +31,19 @@ const rgbaRegex = /rgba\(([0-9\.-]+), ([0-9\.-]+), ([0-9\.-]+), ([0-9\.-]+)\)/gi
 const rgbaReplacement = (_, p1, p2, p3, p4) => `rgba(${Math.round(p1)}, ${Math.round(p2)}, ${Math.round(p3)}, ${p4})`
 
 const empty = []
+const constant = value => () => value
 
 const handleValue = (fromValue, toValue) => {
+  if (fromValue != null && toValue == null) {
+    toValue = fromValue
+  }
+  if (fromValue == null && toValue != null) {
+    fromValue = toValue
+  }
+  if (fromValue === toValue) {
+    return constant(toValue)
+  }
+
   let fromType = typeof fromValue
   let toType = typeof toValue
   if (fromType === 'number' && toType === 'number') {
@@ -44,6 +55,7 @@ const handleValue = (fromValue, toValue) => {
   } else if (Array.isArray(fromValue) && Array.isArray(toValue)) {
     return handleArrayValue(fromValue, toValue)
   }
+
   throw new Error(`unsupported type or not the same type. fromValue: ${fromValue}, toValue: ${toValue}`)
 }
 
@@ -69,12 +81,12 @@ const handleStringValue = (fromValue, toValue) => {
 }
 
 const handleArrayValue = (fromArray, toArray) => {
-  let handlerList = fromArray.map((fromValue, index) => handleValue(fromValue, toArray[index]))
+  let handlerList = toArray.map((toValue, index) => handleValue(fromArray[index], toValue))
   return ratio => handlerList.map(handler => handler(ratio))
 }
 
 const handleObjectValue = (fromObject, toObject) => {
-  let handlerObject = mapValue(fromObject, (fromValue, key) => handleValue(fromValue, toObject[key]))
+  let handlerObject = mapValue(toObject, (toValue, key) => handleValue(fromObject[key], toValue))
   return ratio => mapValue(handlerObject, handler => handler(ratio))
 }
 
