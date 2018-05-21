@@ -14,7 +14,7 @@ class App extends React.PureComponent {
             key={item}
             from={{ opacity: 0, x: -100 }}
             to={{ opacity: toggle ? 1 : 0.25, x: toggle ? 0 : 100 }}
-            options={{ mass: 2 + index * 5, overshootClamping: true }}
+            options={{ mass: 2 + index * 5, overshootClamping: true, allowsOverdamping: true }}
           >
             {({ opacity, x }) => (
               <div

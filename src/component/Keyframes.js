@@ -6,7 +6,7 @@ import reactive from '../reactive'
 
 @reactive
 export default class Spring extends React.PureComponent {
-	spring$ = new SpringSubject(this.props.from, this.props.to, this.props.options)
+  spring$ = new SpringSubject(this.props.from, this.props.to, this.props.options)
 	componentDidUpdate(prevProps) {
 		if (prevProps.to !== this.props.to) {
 			let { to, onAnimating, onAnimated } = this.props
