@@ -16,10 +16,10 @@ export const isSource = obj => !!obj && isObservable(obj)
 export const makeSource = obj => (isSource(obj) ? obj : of(obj))
 
 export const mapValue = (obj, f) =>
-	Object.keys(obj).reduce((result, key) => {
-		result[key] = f(obj[key], key)
-		return result
-	}, {})
+  Object.keys(obj).reduce((result, key) => {
+    result[key] = f(obj[key], key)
+    return result
+  }, {})
 
 export const isPlainObject = obj => {
   if (typeof obj !== 'object' || obj === null) return false
@@ -32,8 +32,7 @@ export const isPlainObject = obj => {
   return Object.getPrototypeOf(obj) === proto
 }
 
-export const isReactComponent = obj =>
-  !!(obj && obj.prototype && obj.prototype.isReactComponent)
+export const isReactComponent = obj => !!(obj && obj.prototype && obj.prototype.isReactComponent)
 
 export const getDisplayName = WrappedComponent => {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component'
@@ -88,3 +87,17 @@ export const combine = shape => {
 }
 
 export const unsubscribe = subscription => subscription.unsubscribe()
+
+export const toPromise = source =>
+  new Promise((resolve, reject) => {
+    let subscription = source.subscribe({
+      complete: () => {
+        resolve()
+        subscription.unsubscribe()
+      },
+      error: () => {
+        reject()
+        subscription.unsubscribe()
+      }
+    })
+  })

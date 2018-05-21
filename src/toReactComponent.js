@@ -7,8 +7,7 @@ const toReactComponent = f => source => {
   const Component = class extends React.PureComponent {
     subject = new Subject()
     view = null
-    view$ = combineLatest(this.subject |> startWith(this.props), source)
-    |> map(([props, data]) => f({ ...data, ...props }))
+    view$ = combineLatest(this.subject |> startWith(this.props), source) |> map(([props, data]) => f(data, props))
     handleView = view => {
       this.view = view
       if (this.mounted) this.forceUpdate()

@@ -35,12 +35,9 @@ const constant = value => () => value
 
 const handleValue = (fromValue, toValue) => {
   if (fromValue != null && toValue == null) {
-    toValue = fromValue
+    return constant(fromValue)
   }
   if (fromValue == null && toValue != null) {
-    fromValue = toValue
-  }
-  if (fromValue === toValue) {
     return constant(toValue)
   }
 
@@ -82,11 +79,19 @@ const handleStringValue = (fromValue, toValue) => {
 
 const handleArrayValue = (fromArray, toArray) => {
   let handlerList = toArray.map((toValue, index) => handleValue(fromArray[index], toValue))
+  // add items which are not in toArray
+  handlerList = handlerList.concat(fromArray.slice(handlerList.length).map(constant))
   return ratio => handlerList.map(handler => handler(ratio))
 }
 
 const handleObjectValue = (fromObject, toObject) => {
   let handlerObject = mapValue(toObject, (toValue, key) => handleValue(fromObject[key], toValue))
+  // add keys which are not in toObject
+  for (let key in fromObject) {
+    if (!handlerObject.hasOwnProperty(key)) {
+      handlerObject[key] = constant(fromObject[key])
+    }
+  }
   return ratio => mapValue(handlerObject, handler => handler(ratio))
 }
 

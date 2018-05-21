@@ -10,6 +10,7 @@ module.exports = (env, argv) => {
       '03': './example/src/03',
       '04': './example/src/04',
       '05': './example/src/05',
+      '06': './example/src/06',
       '01-vanilla': './example/src/01-vanilla',
       '01-component': './example/src/01-component',
       todo: './example/src/todo'
