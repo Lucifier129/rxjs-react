@@ -1,5 +1,5 @@
 import { Spring as WobbleSpring } from 'wobble'
-import { Observable, ReplaySubject } from 'rxjs'
+import { Observable, ReplaySubject, empty } from 'rxjs'
 import { switchMap, tap, startWith } from 'rxjs/operators'
 import handleValue from './handleValue'
 
@@ -31,6 +31,7 @@ const springSubject = (fromValue, toValue, options) => {
   let subject = new ReplaySubject(1)
   let updateLastValue = value => (lastValue = value)
   let handleSwitch = ({ value, observer }) => {
+    if (lastValue == null && value == null) return empty()
     return spring(lastValue, value, options).pipe(tap(updateLastValue), tap(observer))
   }
   let startValue = { value: toValue, observer: options && options.observer }

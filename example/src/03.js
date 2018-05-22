@@ -16,7 +16,9 @@ const defaultStyles = {
 }
 class App extends React.PureComponent {
   state = { toggled: true }
-  toggle = e => this.setState(state => ({ toggled: !state.toggled }))
+  toggle = e => {
+    this.setState(state => ({ toggled: !state.toggled }))
+  }
   render() {
     return (
       <div onClick={this.toggle}>
@@ -25,7 +27,7 @@ class App extends React.PureComponent {
           list={[this.state.toggled ? { color: '#247BA0', value: 'A' } : { color: '#B2DBBF', value: 'B' }]}
           default={{ opacity: 0 }}
           enter={{ opacity: 1 }}
-          leave={{ opacity: 0, pointerEvents: 'none' }}
+          leave={{ opacity: 0 }}
           options={{ overshootClamping: true, damping: 10, stiffness: 20 }}
         >
           {(styles, { color, value }) => (

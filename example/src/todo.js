@@ -1,135 +1,158 @@
+//forked from: https://github.com/chenglou/react-motion/tree/master/demos/demo3-todomvc-list-transition
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { reactive, toReactiveComponent, toReactComponent } from 'rxjs-react'
-import { dynamicSpring } from 'rxjs-react/spring'
-import { Observable, interval, Subject, ReplaySubject, merge, of, fromEvent, range } from 'rxjs'
-import {
-  startWith,
-  switchMap,
-  mapTo,
-  map,
-  scan,
-  publishReplay,
-  refCount,
-  debounceTime,
-  tap,
-  catchError,
-  sample,
-  delay
-} from 'rxjs/operators'
+import { reactive } from 'rxjs-react'
+import { Transition } from 'rxjs-react/component'
 
-class TodoApp extends React.PureComponent {
+class App extends React.Component {
   state = {
-    text: '',
-    todos: []
+    todos: [
+      { key: 't1', data: { text: 'Board the plane', isDone: false } },
+      { key: 't2', data: { text: 'Sleep', isDone: false } },
+      { key: 't3', data: { text: 'Try to finish conference slides', isDone: false } },
+      { key: 't4', data: { text: 'Eat cheese and drink wine', isDone: false } },
+      { key: 't5', data: { text: 'Go around in Uber', isDone: false } },
+      { key: 't6', data: { text: 'Talk with conf attendees', isDone: false } },
+      { key: 't7', data: { text: 'Show Demo 1', isDone: false } },
+      { key: 't8', data: { text: 'Show Demo 2', isDone: false } }
+    ],
+    value: '',
+    selected: 'all'
   }
-  uid = 0
-  handleChange = event => {
+
+  handleSelect = selected => this.setState({ selected })
+  handleClearCompleted = () => this.setState({ todos: this.state.todos.filter(({ data }) => !data.isDone) })
+  handleDestroy = date => this.setState({ todos: this.state.todos.filter(({ key }) => key !== date) })
+  handleChange = ({ target: { value } }) => this.setState({ value })
+
+  handleSubmit = e =>
+    e.preventDefault() ||
     this.setState({
-      text: event.target.value
+      value: '',
+      todos: [
+        {
+          key: 't' + Date.now(),
+          data: { text: this.state.value, isDone: false }
+        }
+      ].concat(this.state.todos)
+    })
+
+  handleDone = doneKey =>
+    this.setState({
+      todos: this.state.todos.map(todo => {
+        const {
+          key,
+          data: { text, isDone }
+        } = todo
+        return key === doneKey ? { key: key, data: { text: text, isDone: !isDone } } : todo
+      })
+    })
+
+  handleToggleAll = () =>
+    this.setState({
+      todos: this.state.todos.map(({ key, data: { text, isDone } }) => ({
+        key: key,
+        data: { text: text, isDone: !this.state.todos.every(({ data }) => data.isDone) }
+      }))
+    })
+
+  getItems = () => {
+    const { todos, value, selected } = this.state
+    return todos.filter(({ data: { isDone, text } }) => {
+      return (
+        text.toUpperCase().indexOf(value.toUpperCase()) >= 0 &&
+        ((selected === 'completed' && isDone) || (selected === 'active' && !isDone) || selected === 'all')
+      )
     })
   }
-  handleAdd = () => {
-    if (!this.state.text) return
-    let todo = {
-      id: this.uid++,
-      completed: false,
-      text: this.state.text
-    }
-    let todos = this.state.todos.concat(todo)
-    this.setState({ todos, text: '' })
-  }
-  handleRemove = id => {
-    let todos = this.state.todos.filter(todo => todo.id !== id)
-    this.setState({ todos })
-  }
-  handleToggle = id => {
-    let todos = this.state.todos.map(todo => (todo.id !== id ? todo : { ...todo, completed: !todo.completed }))
-    this.setState({ todos })
-  }
-  handleToggleAll = () => {
-    let todos = this.state.todos.map(todo => ({
-      ...todo,
-      completed: !todo.completed
-    }))
-    this.setState({ todos })
-  }
+
   render() {
+    const { todos, value, selected } = this.state
+    const itemsLeft = todos.filter(({ data: { isDone } }) => !isDone).length
+    const items = this.getItems()
     return (
-      <div>
-        <h1>Todo App</h1>
-        <header>
-          input: <input type="text" value={this.state.text} onChange={this.handleChange} />
-          <button onClick={this.handleAdd}>add</button>
-          <button onClick={this.handleToggleAll}>toggleAll</button>
-        </header>
-        {this.state.todos.map(todo => (
-          <TodoItem$ key={todo.id} {...todo} onToggle={this.handleToggle} onRemove={this.handleRemove} />
-        ))}
-      </div>
+      <section className="todoapp">
+        <Header value={value} handleSubmit={this.handleSubmit} handleChange={this.handleChange} />
+        <section className="main">
+          <input
+            className="toggle-all"
+            type="checkbox"
+            checked={itemsLeft === 0}
+            style={{ display: todos.length === 0 ? 'none' : 'inline' }}
+            onChange={this.handleToggleAll}
+          />
+          <ul className="todo-list">
+            <Transition
+              keys={item => item.key}
+              list={items}
+              default={{ height: 0, opacity: 1 }}
+              enter={{ height: 60, opacity: 1 }}
+              leave={{ height: 0, opacity: 0 }}
+            >
+              {(style, { key, data: { isDone, text } }) => (
+                <li style={style} className={isDone ? 'completed' : ''}>
+                  <div className="view">
+                    <input className="toggle" type="checkbox" onChange={() => this.handleDone(key)} checked={isDone} />
+                    <label>{text}</label>
+                    <button className="destroy" onClick={() => this.handleDestroy(key)} />
+                  </div>
+                </li>
+              )}
+            </Transition>
+          </ul>
+          <Footer
+            itemsLeft={itemsLeft}
+            selected={selected}
+            handleSelect={this.handleSelect}
+            handleClearCompleted={this.handleClearCompleted}
+          />
+        </section>
+      </section>
     )
   }
 }
 
-const Timer$ = interval(100) |> map(count => ({ count })) |> toReactComponent(props => props.count)
+const Header = ({ value, handleSubmit, handleChange }) => (
+  <header className="header">
+    <h1>todos</h1>
+    <form onSubmit={handleSubmit}>
+      <input
+        autoFocus={true}
+        className="new-todo"
+        placeholder="What needs to be done?"
+        value={value}
+        onChange={handleChange}
+      />
+    </form>
+  </header>
+)
 
-const toPercent = x => x * 100 + '%'
+const Footer = ({ itemsLeft, selected, handleSelect, handleClearCompleted }) => (
+  <footer className="footer">
+    <span className="todo-count">
+      <strong>{itemsLeft}</strong> {itemsLeft === 1 ? 'item' : 'items'} left
+    </span>
+    <ul className="filters">
+      <li>
+        <a className={selected === 'all' ? 'selected' : ''} onClick={() => handleSelect('all')}>
+          All
+        </a>
+      </li>
+      <li>
+        <a className={selected === 'active' ? 'selected' : ''} onClick={() => handleSelect('active')}>
+          Active
+        </a>
+      </li>
+      <li>
+        <a className={selected === 'completed' ? 'selected' : ''} onClick={() => handleSelect('completed')}>
+          Completed
+        </a>
+      </li>
+    </ul>
+    <button className="clear-completed" onClick={handleClearCompleted}>
+      Clear completed
+    </button>
+  </footer>
+)
 
-@reactive
-class Slider$ extends React.PureComponent {
-  constructor(props) {
-    super(props)
-    this.spring$ = dynamicSpring()
-  }
-  update = status => {
-    this.spring$.next(status ? 1 : 0)
-  }
-  componentDidMount() {
-    this.update(this.props.status)
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.status !== this.props.status) {
-      this.update(this.props.status)
-    }
-  }
-  render() {
-    let style = {
-      width: this.spring$ |> map(toPercent),
-      height: 3,
-      backgroundColor: 'green'
-    }
-    return <div style={style} />
-  }
-}
-
-@reactive
-class TodoItem$ extends React.PureComponent {
-  spring$ = dynamicSpring()
-  handleRemove = () => {
-    let remove = value => this.props.onRemove(this.props.id)
-    this.spring$.next(0).subscribe({ complete: remove })
-  }
-  handleToggle = () => {
-    this.props.onToggle(this.props.id)
-  }
-  render() {
-    let { props, state } = this
-    let style = {
-      height: this.spring$ |> map(value => value * 40),
-      opacity: this.spring$,
-      backgroundColor: '#eaeaea',
-      marginBottom: 3,
-      lineHeight: '40px'
-    }
-    return (
-      <div style={style}>
-        {props.text} <button onClick={this.handleToggle}>{props.completed ? 'completed' : 'active'}</button>{' '}
-        <button onClick={this.handleRemove}>delete</button>
-        <Timer$ />
-        <Slider$ status={props.completed} />
-      </div>
-    )
-  }
-}
-
-ReactDOM.render(<TodoApp />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))

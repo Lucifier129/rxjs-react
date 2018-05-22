@@ -37,8 +37,13 @@ const handleValue = (fromValue, toValue) => {
   if (fromValue != null && toValue == null) {
     return constant(fromValue)
   }
+
   if (fromValue == null && toValue != null) {
     return constant(toValue)
+  }
+
+  if (fromValue == null && toValue == null) {
+    return constant(null)
   }
 
   let fromType = typeof fromValue
