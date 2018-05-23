@@ -1,6 +1,6 @@
 {
   "name": "rxjs-react",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "make your react-component become reactive with rxjs",
   "main": "lib/index.js",
   "scripts": {
@@ -15,14 +15,8 @@
     "type": "git",
     "url": "git+https://github.com/Lucifier129/rxjs-react.git"
   },
-  "files": [
-    "lib"
-  ],
-  "keywords": [
-    "rxjs",
-    "react",
-    "reactive"
-  ],
+  "files": ["lib"],
+  "keywords": ["rxjs", "react", "reactive"],
   "author": "https://github.com/Lucifier129",
   "license": "ISC",
   "bugs": {
@@ -45,12 +39,14 @@
     "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.6.2",
     "webpack": "^4.4.1",
-    "webpack-cli": "^2.0.13",
-    "wobble": "^1.5.0"
+    "webpack-cli": "^2.0.13"
   },
   "peerDependencies": {
     "react": ">= 16.3.2",
     "react-dom": ">= 16.3.2",
     "rxjs": ">= 6.1.0"
+  },
+  "dependencies": {
+    "wobble": "^1.5.0"
   }
 }

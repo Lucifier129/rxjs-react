@@ -1,7 +1,8 @@
 import 'babel-polyfill'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { reactive, toPromise } from 'rxjs-react'
+import { reactive } from 'rxjs-react'
+import { toPromise } from 'rxjs-react/operators'
 import { Spring, SpringSubject } from 'rxjs-react/spring'
 import { map, delay } from 'rxjs/operators'
 

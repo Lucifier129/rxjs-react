@@ -1,6 +1,6 @@
 import reactive from './reactive'
 import { map, switchMap } from 'rxjs/operators'
-import { combine, getDisplayName } from './shared'
+import { combine, getDisplayName } from '../shared'
 
 const toReactiveComponent = f => source => {
   let displayName = getDisplayName(f)

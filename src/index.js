@@ -1,6 +1,4 @@
 import reactive from './reactive'
-import toReactiveComponent from './toReactiveComponent'
-import toReactComponent from './toReactComponent'
-import { combine, toPromise } from './shared'
+import { combine } from './shared'
 
-export { reactive, combine, toPromise, toReactiveComponent, toReactComponent }
+export { reactive, combine }

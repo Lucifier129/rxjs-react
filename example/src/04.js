@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Spring } from 'rxjs-react/component'
+import { Spring } from 'rxjs-react/components'
 
 class App extends React.PureComponent {
   state = { toggle: true, items: ['item1', 'item2', 'item3', 'item4', 'item5'] }

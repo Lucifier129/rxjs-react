@@ -1,8 +1,7 @@
 //forked from: https://github.com/chenglou/react-motion/tree/master/demos/demo3-todomvc-list-transition
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { reactive } from 'rxjs-react'
-import { Transition } from 'rxjs-react/component'
+import { Transition } from 'rxjs-react/components'
 
 class App extends React.Component {
   state = {

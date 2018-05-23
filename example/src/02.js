@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Transition } from 'rxjs-react/component'
+import { Transition } from 'rxjs-react/components'
 
 const defaultStyles = {
   overflow: 'hidden',

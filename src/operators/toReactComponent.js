@@ -1,7 +1,7 @@
 import React from 'react'
 import { Subject, combineLatest } from 'rxjs'
 import { map, switchMap, startWith } from 'rxjs/operators'
-import { getDisplayName } from './shared'
+import { getDisplayName } from '../shared'
 
 const toReactComponent = f => source => {
   const Component = class extends React.PureComponent {
