@@ -72,3 +72,82 @@ it('should support nest object', () => {
   emitter.emit('c', 4)
   expect(expected.length).toBe(0)
 })
+
+it('should support structure sharing', () => {
+  let emitter = new EventEmitter()
+  let a$ = fromEvent(emitter, 'a')
+  let b$ = fromEvent(emitter, 'b')
+  let c$ = fromEvent(emitter, 'c')
+  let unchange = {
+    a: 1,
+    b: 2,
+    c: 3
+  }
+  let list$ = combine({
+    unchange: unchange,
+    a: [a$],
+    nest: [
+      b$,
+      unchange,
+      {
+        c: c$
+      }
+    ]
+  })
+  let expected = [
+    {
+      unchange: {
+        a: 1,
+        b: 2,
+        c: 3
+      },
+      a: [1],
+      nest: [
+        2,
+        {
+          a: 1,
+          b: 2,
+          c: 3
+        },
+        { c: 3 }
+      ]
+    },
+    {
+      unchange: {
+        a: 1,
+        b: 2,
+        c: 3
+      },
+      a: [1],
+      nest: [
+        2,
+        {
+          a: 1,
+          b: 2,
+          c: 3
+        },
+        { c: 4 }
+      ]
+    }
+  ]
+
+  list$.subscribe(value => {
+    expect(value).toEqual(expected.shift())
+    expect(value.unchange === unchange).toBe(true)
+    expect(value.nest[1] === unchange).toBe(true)
+    expect(unchange).toEqual({
+      a: 1,
+      b: 2,
+      c: 3
+    })
+  })
+
+  emitter.emit('a', 1)
+  expect(expected.length).toBe(2)
+  emitter.emit('b', 2)
+  expect(expected.length).toBe(2)
+  emitter.emit('c', 3)
+  expect(expected.length).toBe(1)
+  emitter.emit('c', 4)
+  expect(expected.length).toBe(0)
+})
