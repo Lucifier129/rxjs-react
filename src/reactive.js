@@ -1,7 +1,7 @@
 import React from 'react'
 import { Subject, noop } from 'rxjs'
 import { switchMap, publishReplay, refCount } from 'rxjs/operators'
-import { combine, unsubscribe, isReactComponent, getDisplayName, isPlainObject, once } from './shared'
+import { combine, unsubscribe, isReactComponent, getDisplayName, isPlainObject, once, isSource } from './shared'
 
 const defaults = { displayName: '', PureComponent: true }
 const reactive = options => Component => {
@@ -104,6 +104,24 @@ const makeReactComponent = (Component, PureComponent) => {
 }
 
 export default function(param) {
-	if (param === undefined || isPlainObject(param)) return reactive(param)
+	// turn react element to observable
+	if (React.isValidElement(param)) {
+		const reactElement$ = combine(param)
+		param = () => reactElement$
+		param.displayName = 'Element'
+	}
+
+	// treat observable as react functional component
+	if (isSource(param)) {
+		const reactElement$ = param
+		param = () => reactElement$
+		param.displayName = 'Value'
+	}
+
+	// handle config object
+	if (param === undefined || isPlainObject(param)) {
+		return reactive(param)
+	}
+
 	return reactive()(param)
 }
