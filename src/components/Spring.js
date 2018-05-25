@@ -9,8 +9,8 @@ import { shallowEqual } from '../shared'
 export default class Spring extends React.PureComponent {
   spring$ = new SpringSubject(this.props.from, null, this.props.options)
   next = () => {
-    let { to, onAnimating, onAnimated } = this.props
-    this.spring$.next(to).subscribe({
+    let { to, onAnimating, onAnimated, options } = this.props
+    this.spring$.next(to, options).subscribe({
       next: onAnimating,
       complete: onAnimated
     })
