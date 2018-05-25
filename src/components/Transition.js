@@ -16,7 +16,6 @@ export default class Transition extends React.PureComponent {
 		}
 		let { list, keyMap } = prevState.transitions
 		let { list: newList, keyMap: newKeyMap } = newTransitions
-		let newLength = newList.length
 		for (let i = 0; i < list.length; i++) {
 			let item = list[i]
 			if (!newKeyMap.hasOwnProperty(item.key)) {
