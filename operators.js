@@ -1,1 +1,1 @@
-module.exports = require('./lib/operator')
+module.exports = require('./lib/operators')

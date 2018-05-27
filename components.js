@@ -1,1 +1,1 @@
-module.exports = require('./lib/component')
+module.exports = require('./lib/components')
