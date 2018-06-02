@@ -46,19 +46,15 @@ const createReactiveAgent = (instance, superRender, settings) => {
     return view$.pipe(once(clearSubscriptions))
   }
   let view$ = subject.pipe(switchMap(toView))
-  let hasRequestAnimation = false
   let handleView = nextView => {
     view = nextView
     if (mounted && !isRendering) {
-      if (hasRequestAnimation) return
-      hasRequestAnimation = true
-      requestAnimationFrame(refresh)
+      refresh()
     }
   }
   let subscription = view$.subscribe(handleView)
   let isRefresh = false
   let refresh = () => {
-    hasRequestAnimation = false
     if (!mounted) return
     isRefresh = true
     instance.forceUpdate()
