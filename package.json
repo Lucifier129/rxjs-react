@@ -9,14 +9,19 @@
     "example:dev": "webpack --watch --env.development",
     "example:prod": "webpack --env.production",
     "preexample:prod": "rimraf ./example/dist",
-    "test": "jest"
+    "test": "jest",
+    "prepublish": "npm test && npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lucifier129/rxjs-react.git"
   },
   "files": [
-    "lib"
+    "lib",
+    "index.js",
+    "components.js",
+    "operators.js",
+    "spring.js"
   ],
   "keywords": [
     "rxjs",
