@@ -2,7 +2,7 @@
   "name": "rxjs-react",
   "version": "0.1.0",
   "description": "make your react-component become reactive with rxjs",
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "prebuild": "rimraf ./lib",
@@ -42,6 +42,8 @@
     "babel-polyfill": "^6.26.0",
     "events": "^2.0.0",
     "jest": "^22.4.3",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "react-test-renderer": "^16.4.0",
     "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.6.2",

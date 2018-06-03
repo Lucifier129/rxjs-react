@@ -1,14 +1,22 @@
-import React from 'react'
-import { Subject, noop } from 'rxjs'
-import { switchMap, publishReplay, refCount, tap } from 'rxjs/operators'
-import { combine, unsubscribe, isReactComponent, getDisplayName, isPlainObject, once, isSource } from './shared'
+import React from "react"
+import { Subject, noop } from "rxjs"
+import { switchMap, publishReplay, refCount, tap } from "rxjs/operators"
+import {
+  combine,
+  unsubscribe,
+  isReactComponent,
+  getDisplayName,
+  isPlainObject,
+  once,
+  isSource
+} from "./shared"
 
-const defaults = { displayName: '', PureComponent: true }
+const defaults = { displayName: "", PureComponent: true }
 const reactive = options => Component => {
   const settings = { ...defaults, ...options }
   const ReactComponent = makeReactComponent(Component, settings.PureComponent)
   class ReactiveComponent extends ReactComponent {
-    $$agent = createReactiveAgent(this, super.render, settings)
+    $$agent = createReactiveAgent(this, super.render)
     componentDidMount() {
       this.$$agent.handleMounted()
       super.componentDidMount && super.componentDidMount()
@@ -26,7 +34,7 @@ const reactive = options => Component => {
   return ReactiveComponent
 }
 
-const createReactiveAgent = (instance, superRender, settings) => {
+const createReactiveAgent = (instance, superRender) => {
   let view = null
   let subscriptions = []
   let subject = new Subject()
@@ -46,15 +54,19 @@ const createReactiveAgent = (instance, superRender, settings) => {
     return view$.pipe(once(clearSubscriptions))
   }
   let view$ = subject.pipe(switchMap(toView))
+  let hasRequestAnimation = false
   let handleView = nextView => {
     view = nextView
     if (mounted && !isRendering) {
-      refresh()
+      if (hasRequestAnimation) return
+      hasRequestAnimation = true
+      requestAnimationFrame(refresh)
     }
   }
   let subscription = view$.subscribe(handleView)
   let isRefresh = false
   let refresh = () => {
+    hasRequestAnimation = false
     if (!mounted) return
     isRefresh = true
     instance.forceUpdate()
@@ -102,16 +114,16 @@ const makeReactComponent = (Component, PureComponent) => {
 export default function(param) {
   // turn react element to observable
   if (React.isValidElement(param)) {
-    const reactElement$ = combine(param)
-    param = () => reactElement$
-    param.displayName = 'Element'
+    const element = param
+    param = () => element
+    param.displayName = "Element"
   }
 
   // treat observable as react functional component
   if (isSource(param)) {
-    const reactElement$ = param
-    param = () => reactElement$
-    param.displayName = 'Value'
+    const value$ = param
+    param = () => value$
+    param.displayName = "Value"
   }
 
   // handle config object
