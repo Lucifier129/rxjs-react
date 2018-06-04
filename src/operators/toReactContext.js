@@ -1,11 +1,13 @@
-import React from 'react'
-import toReactComponent from './toReactComponent';
+import React from "react"
+import toReactComponent from "./toReactComponent"
 
-const toReactContext = defaultValue => source => {
-  let { Provider, Consumer } = React.createContext(defaultValue)
-  let ReactiveProvider = source.pipe(toReactComponent((data, props) => {
-    return <Provider value={data} {...props} />
-  }))
+const toReactContext = source => {
+  let { Provider, Consumer } = React.createContext()
+  let ReactiveProvider = source.pipe(
+    toReactComponent((data, props) => {
+      return <Provider value={data} {...props} />
+    })
+  )
   return {
     Provider: ReactiveProvider,
     Consumer

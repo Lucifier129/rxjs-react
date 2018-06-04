@@ -5,11 +5,11 @@ const toPromise = source =>
       next: value => valueList.push(value),
       complete: () => {
         resolve(valueList)
-        subscription.unsubscribe()
+        subscription && subscription.unsubscribe()
       },
       error: error => {
         reject(error)
-        subscription.unsubscribe()
+        subscription && subscription.unsubscribe()
       }
     })
   })
