@@ -35,7 +35,7 @@ module.exports = (env, argv) => {
     },
     resolve: {
       alias: {
-        'rxjs-react': path.join(__dirname, 'src')
+        'rxjs-react': path.join(__dirname)
       }
     }
   }

@@ -4,6 +4,7 @@
   "description": "make your react-component become reactive with rxjs",
   "main": "index.js",
   "scripts": {
+    "dev": "babel -w src --out-dir lib",
     "build": "babel src --out-dir lib",
     "prebuild": "rimraf ./lib",
     "example:dev": "webpack --watch --env.development",

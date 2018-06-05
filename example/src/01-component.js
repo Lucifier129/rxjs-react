@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Spring } from 'rxjs-react/components'
-import { map, tap } from 'rxjs/operators'
 
 const TRIANGLE = 'M20,380 L380,380 L380,380 L200,20 L20,380 Z'
 const RECTANGLE = 'M20,20 L20,380 L380,380 L380,20 L20,20 Z'
