@@ -46,7 +46,16 @@ const App = reactive(() => {
 render(<App />, document.getElementById('root'))
 ```
 
-# Usage
+# Usage 👇
+
+* [reactive element](#reactive-element)
+* [reactive props](#reactive-props)
+* [reactive component](#reactive-component)
+* [functional reactive component](#functional-reactive-component)
+* [everything in jsx can be reactive](#everything in jsx can be reactive)
+* [data fetching](#data-fetching)
+* [loading](#loading)
+* [code-spliting](#code-spliting)
 
 ## reactive element
 
@@ -101,11 +110,13 @@ class App extends React.PureComponent {
 	incre$ = new Subject()
 	decre$ = new Subject()
 	autoIncre$ = interval(100)
+
 	count$ = merge(
 		this.incre$.pipe(mapTo(+1)),
 		this.decre$.pipe(mapTo(-1)),
 		this.autoIncre$.pipe(mapTo(+0.01))
 	).pipe(startWith(0), scan((sum, n) => sum + n, 0), map(n => n.toFixed(2)))
+
 	render() {
 		return (
 			<React.Fragment>
@@ -135,4 +146,157 @@ import { interval } from 'rxjs'
 const App = reactive(props => <h1>count {interval(props.period)}</h1>)
 
 render(<App period={10} />, document.getElementById('root'))
+```
+
+## everything in jsx can be reactive
+
+`react element`, `react component`, `react props`, `style`, `react children`, almost everything in jsx can be reactive.
+
+[click to see reactive demo](https://codesandbox.io/s/8lvnzzlyn8)
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { reactive } from 'rxjs-react'
+import { interval } from 'rxjs'
+import { map, startWith, switchMap } from 'rxjs/operators'
+
+const App$ = reactive(() => {
+	let Type$ = interval(1000).pipe(
+		startWith(0),
+		map(value => `h${value % 6 + 1}`)
+	)
+	let style$ = {
+		color: interval(1000 / 60).pipe(
+			map(value => `rgb(${value % 255}, 10, 110)`)
+		)
+	}
+	let props$ = {
+		count: interval(100)
+	}
+	return (
+		<div style={style$} {...props$}>
+			<Type$>
+				Everything can be reactive: <span>{interval(100)}</span>
+			</Type$>
+		</div>
+	)
+})
+
+ReactDOM.render(<App$ />, document.getElementById('root'))
+```
+
+## data-fetching
+
+We can just use `from` to make promise become observable.
+
+[click to see reactive demo](https://codesandbox.io/s/q9nnx8xn26)
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { reactive } from 'rxjs-react'
+import { from } from 'rxjs'
+import { map } from 'rxjs/operators'
+
+@reactive
+class App extends React.Component {
+	data$ = from(fetch(this.props.url).then(res => res.json()))
+	render() {
+		return (
+			<React.Fragment>
+				<h1>data from github api</h1>
+				<pre>
+					{this.data$.pipe(
+						map(data => {
+							return JSON.stringify(data, null, 2)
+						})
+					)}
+				</pre>
+			</React.Fragment>
+		)
+	}
+}
+
+ReactDOM.render(
+	<App url="https://api.github.com/repos/lucifier129/rxjs-react" />,
+	document.getElementById('root')
+)
+```
+
+## loading
+
+We can receive multiple values from an observable, so use `startWith` is a good way to show loading or something defaults.
+
+We can also use `merge(defaultValue$, asyncValue$)`.
+
+[click to see reactive demo](https://codesandbox.io/s/4rqo2ml77w)
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { reactive } from 'rxjs-react'
+import { from, merge } from 'rxjs'
+import { map, delay, startWith } from 'rxjs/operators'
+
+@reactive
+class App extends React.Component {
+	data$ = from(fetch(this.props.url).then(res => res.json())).pipe(delay(1000))
+	render() {
+		return (
+			<React.Fragment>
+				<h1>data from github api</h1>
+				<pre>
+					{this.data$.pipe(
+						map(data => {
+							return JSON.stringify(data, null, 2)
+						}),
+						startWith(<div>loading...</div>)
+					)}
+				</pre>
+			</React.Fragment>
+		)
+	}
+}
+
+ReactDOM.render(
+	<App url="https://api.github.com/repos/lucifier129/rxjs-react" />,
+	document.getElementById('root')
+)
+```
+
+## code spliting
+
+The solution of `code-spliting` is the same as `loading`
+
+[click to see reactive demo](https://codesandbox.io/s/olw0nwm2kq)
+
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { reactive } from 'rxjs-react'
+import { from, merge, of } from 'rxjs'
+import { map } from 'rxjs/operators'
+
+const ComponentA = () => <div>component A</div>
+const Loading = () => <div>loading...</div>
+const fakeImportComponentA = () =>
+	new Promise(resovle => {
+		setTimeout(() => resolve(ComponentA), 1000)
+	})
+const Component$ = merge(of(Loading), from(fakeImportComponentA()))
+
+@reactive
+class App extends React.Component {
+	render() {
+		return (
+			<React.Fragment>
+				<h1>code spliting with rxjs-react</h1>
+				{Component$.pipe(map(Component => <Component />))}
+			</React.Fragment>
+		)
+	}
+}
+
+ReactDOM.render(<App />, document.getElementById('root'))
 ```
