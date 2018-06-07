@@ -27,7 +27,7 @@ Put observable(`rxjs`) in `render function`.
 
 [click to see reactive demo](https://codesandbox.io/s/9o6ym1jrr4)
 
-```jsx
+```javascript
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -52,7 +52,7 @@ render(<App />, document.getElementById('root'))
 * [reactive props](#reactive-props)
 * [reactive component](#reactive-component)
 * [functional reactive component](#functional-reactive-component)
-* [everything in jsx can be reactive](#everything in jsx can be reactive)
+* [everything in jsx can be reactive](#everything-in-jsx-can-be-reactive)
 * [data fetching](#data-fetching)
 * [loading](#loading)
 * [code-spliting](#code-spliting)
@@ -63,7 +63,7 @@ render(<App />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/34nv3y6891)
 
-```jsx
+```javascript
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -79,7 +79,7 @@ render(app, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/l9ppox2jl)
 
-```jsx
+```javascript
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -98,7 +98,7 @@ render(app, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/ppoz847m67)
 
-```jsx
+```javascript
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -137,7 +137,7 @@ render(<App />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/wkyo9442vk)
 
-```jsx
+```javascript
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -154,7 +154,7 @@ render(<App period={10} />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/8lvnzzlyn8)
 
-```jsx
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -192,7 +192,7 @@ We can just use `from` to make promise become observable.
 
 [click to see reactive demo](https://codesandbox.io/s/q9nnx8xn26)
 
-```jsx
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -232,7 +232,7 @@ We can also use `merge(defaultValue$, asyncValue$)`.
 
 [click to see reactive demo](https://codesandbox.io/s/4rqo2ml77w)
 
-```jsx
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -271,7 +271,7 @@ The solution of `code-spliting` is the same as `loading`
 
 [click to see reactive demo](https://codesandbox.io/s/olw0nwm2kq)
 
-```jsx
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -300,3 +300,12 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById('root'))
 ```
+
+# animation
+
+* [demo1](https://codesandbox.io/s/3yr1rjv245)
+* [demo2](https://codesandbox.io/s/8p3wk0ym02)
+* [demo3](https://codesandbox.io/s/l9xqwxop9q)
+* [demo4](https://codesandbox.io/s/6l9jq3p623)
+* [demo5](https://codesandbox.io/s/vn74vk9n47)
+* [demo6](https://codesandbox.io/s/wkn385j76w)
