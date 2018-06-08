@@ -82,6 +82,7 @@ render(<App />, document.getElementById('root'))
 * [data fetching](#data-fetching)
 * [loading](#loading)
 * [code-spliting](#code-spliting)
+* [animation][#animation]
 
 ## reactive element
 

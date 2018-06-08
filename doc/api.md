@@ -225,13 +225,13 @@ import {
 } from 'rxjs-react/operators'
 ```
 
-### toReactComponent -> observable -> (render: (value, props) -> ReactElement) -> ReactComponent
+### toReactComponent -> observable -> ((value, props) -> ReactElement) -> ReactComponent
 
 `toReactComponent` can make `observable` to be `ReactComponent`, it receives a render function which has two arguments, the first one is value from `observable`, the second one is props from `ReactComponent`
 
 [click to see reactive demo](https://codesandbox.io/s/rmkwjx0rrq)
 
-### toReactiveComponent -> observable -> (render: (value, props) -> ReactElement|observable) -> ReactComponent
+### toReactiveComponent -> observable -> ((value, props) -> ReactElement|observable) -> ReactComponent
 
 `toReactiveComponent` is similar to `toReactComponent`, except it supports write `observable` in `render` function.
 
