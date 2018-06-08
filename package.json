@@ -11,7 +11,7 @@
     "example:prod": "webpack --env.production",
     "preexample:prod": "rimraf ./example/dist",
     "test": "jest",
-    "prepublish": "npm test && npm run build"
+    "prepublishOnly": "npm test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -53,13 +53,14 @@
     "react-test-renderer": "^16.4.0",
     "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.6.2",
+    "rxjs": "^6.2.0",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.13"
   },
   "peerDependencies": {
-    "react": ">= 16.3.2",
-    "react-dom": ">= 16.3.2",
-    "rxjs": ">= 6.1.0"
+    "react": ">= 16.4.0",
+    "react-dom": ">= 16.4.0",
+    "rxjs": ">= 6.2.0"
   },
   "dependencies": {
     "wobble": "^1.5.0"
