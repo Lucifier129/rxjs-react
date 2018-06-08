@@ -3,7 +3,7 @@
 
     npm install rxjs-react
 
-```javascript
+```jsx
 // ES2015
 import { reactive } from 'rxjs-react'
 
@@ -15,19 +15,19 @@ const { reactive } = require('rxjs-react')
 
 * [Motivation](#motivation)
 * [Usage](#usage)
-* [API Doc](#api-doc)
+* [API Doc](./doc/api.md)
 
 # Motivation
 
-`React Suspense` is a great new feature in `react`, it supports writing async code in `render function` without `async/await` syntax, and making `data-fetching`, `loading` and `code-spliting` become easier and simpler.
+`React Suspense` is a great new feature in `react v16.x`, it supports writing async code in `render function` without `async/await` syntax, and making `data-fetching`, `loading` and `code-spliting` become easier and simpler.
 
 What if we go further?
 
-Put observable(`rxjs`) in `render function`.
+Put observable(`rxjs`) in `render function`. [learn more](./doc/api.md#reactive)
 
 [click to see reactive demo](https://codesandbox.io/s/9o6ym1jrr4)
 
-```javascript
+```jsx
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -42,6 +42,32 @@ const App = reactive(() => {
 	)
 	return <div>{hello$}</div>
 })
+
+render(<App />, document.getElementById('root'))
+```
+
+And put `react` in `observable`. [learn more](./doc/api.md#operators)
+
+[click to see reactive demo](https://codesandbox.io/s/rmkwjx0rrq)
+
+```jsx
+import React from 'react'
+import { render } from 'react-dom'
+import { toReactComponent } from 'rxjs-react/operators'
+import { from, of } from 'rxjs'
+import { delay, scan, concatMap } from 'rxjs/operators'
+
+const App = from('hello rxjs-react!').pipe(
+	concatMap(char => of(char).pipe(delay(300))),
+	scan((str, char) => str + char, ''),
+	toReactComponent(text => {
+		return (
+			<div>
+				<h1>{text}</h1>
+			</div>
+		)
+	})
+)
 
 render(<App />, document.getElementById('root'))
 ```
@@ -63,7 +89,7 @@ render(<App />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/34nv3y6891)
 
-```javascript
+```jsx
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -79,7 +105,7 @@ render(app, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/l9ppox2jl)
 
-```javascript
+```jsx
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -98,7 +124,7 @@ render(app, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/ppoz847m67)
 
-```javascript
+```jsx
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -137,7 +163,7 @@ render(<App />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/wkyo9442vk)
 
-```javascript
+```jsx
 import React from 'react'
 import { render } from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -154,7 +180,7 @@ render(<App period={10} />, document.getElementById('root'))
 
 [click to see reactive demo](https://codesandbox.io/s/8lvnzzlyn8)
 
-```javascript
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -192,7 +218,7 @@ We can just use `from` to make promise become observable.
 
 [click to see reactive demo](https://codesandbox.io/s/q9nnx8xn26)
 
-```javascript
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -232,7 +258,7 @@ We can also use `merge(defaultValue$, asyncValue$)`.
 
 [click to see reactive demo](https://codesandbox.io/s/4rqo2ml77w)
 
-```javascript
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -271,7 +297,7 @@ The solution of `code-spliting` is the same as `loading`
 
 [click to see reactive demo](https://codesandbox.io/s/olw0nwm2kq)
 
-```javascript
+```jsx
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { reactive } from 'rxjs-react'
@@ -303,9 +329,99 @@ ReactDOM.render(<App />, document.getElementById('root'))
 
 # animation
 
+`rxjs-react` provides two ways to implement animations.
+
+* `rxjs` style api
+
+```jsx
+import { Spring, SpringSubject } from 'rxjs-react/spring'
+const spring$ = new Spring(fromValue, toValue, options)
+// and
+const subject = new SpringSubject(fromValue, toValue, options)
+```
+
+* `react` style api
+
+```jsx
+import { Spring Transition } from 'rxjs-react/components'
+
+<Spring from={fromValue} to={toValue} options={options} />
+// and
+<Transition
+	list={list}
+	default={default}
+	enter={enter}
+	leave={leave}
+	options={options}
+	onEnter={onEnter}
+	onLeave={onLeave}
+>
+	{(styles, item) => <div style={styles}>{item}</div>}
+</Transition>
+```
+
+[click to see an simple example](https://codesandbox.io/s/p9xzx899nm)
+
+```jsx
+import React from 'react'
+import { render } from 'react-dom'
+import { reactive } from 'rxjs-react'
+import { SpringSubject } from 'rxjs-react/spring'
+
+const styles = [
+	{
+		display: 'inline-block',
+		position: 'relative',
+		left: -100,
+		transform: 'rotate(0deg) scale(1, 1)',
+		color: 'purple'
+	},
+	{
+		display: 'inline-block',
+		position: 'relative',
+		left: 20,
+		transform: 'rotate(360deg) scale(2, 2)',
+		color: 'red'
+	}
+]
+
+const containerStyle = {
+	fontFamily: 'sans-serif',
+	textAlign: 'center',
+	fontSize: '30px',
+	paddingTop: 30
+}
+
+@reactive
+class App extends React.Component {
+	spring$ = SpringSubject(styles[0])
+	handleToggle = () => {
+		this.spring$.next(styles.reverse()[0])
+	}
+	render() {
+		return (
+			<div style={containerStyle}>
+				<button onClick={this.handleToggle}>toggle</button>
+				<div style={this.spring$}>{'\u2728'}</div>
+			</div>
+		)
+	}
+}
+
+render(<App />, document.getElementById('root'))
+```
+
+## some of react-spring examples reimplemented by rxjs-react
+
 * [demo1](https://codesandbox.io/s/3yr1rjv245)
 * [demo2](https://codesandbox.io/s/8p3wk0ym02)
 * [demo3](https://codesandbox.io/s/l9xqwxop9q)
 * [demo4](https://codesandbox.io/s/6l9jq3p623)
 * [demo5](https://codesandbox.io/s/vn74vk9n47)
 * [demo6](https://codesandbox.io/s/wkn385j76w)
+
+# Note
+
+The author of this repository is not native speaker, if you find syntax error, please help to improve:-)
+
+Welcome to contribute!
