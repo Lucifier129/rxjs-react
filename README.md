@@ -72,7 +72,7 @@ const App = from('hello rxjs-react!').pipe(
 render(<App />, document.getElementById('root'))
 ```
 
-# Usage 👇
+# Usage
 
 * [reactive element](#reactive-element)
 * [reactive props](#reactive-props)
